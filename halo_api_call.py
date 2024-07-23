@@ -42,7 +42,7 @@ def createAsset(token, asset_list: list):
         body["inventory_number"] = asset[1]  # asset tag
         body["assettag"] = body["inventory_number"]
 
-        print(asset)
+        # print(asset)
 
         # body["fields"][0]["value"] = ""  # name TODO: differentiate between MAC and PC
         body["fields"][1]["value"] = asset[2]  # model
@@ -60,14 +60,14 @@ def createAsset(token, asset_list: list):
 
         body["notes"] = asset[-1]
 
-        print(body)
+        # print(body)
 
-        response = requests.post(url=url, headers=headers, data=json.dumps([body]))
-        return response
+    response = requests.post(url=url, headers=headers, data=json.dumps([body]))
+    return response
 
 def getAssets(token):
     assetUrl = baseLink + "/asset/4142"
     headers = {"Authorization": f"Bearer {token}"}
 
     response = requests.get(url=assetUrl, headers=headers)
-    print(response)
+    print(response.text)
