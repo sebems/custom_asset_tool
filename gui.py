@@ -16,9 +16,9 @@ def export(dataframe):
     response = createAsset(token, export_list)
 
     if (response.ok):
-        st.success('Export Successful!', icon="✅")
+        st.toast('Export Successful!', icon="✅")
     else:
-        st.st.error(response.status_code + " " + response.reason, icon="🚨")
+        st.toast(response.status_code + " " + response.reason, icon="🚨")
 
 
 def uploadFile():
