@@ -63,10 +63,7 @@ def createAsset(token, asset_list: list):
         print(body)
 
         response = requests.post(url=url, headers=headers, data=json.dumps([body]))
-        if (response.ok):
-            st.success('Export Successful!', icon="✅")
-        else:
-            st.st.error(response.status_code + " " + response.reason, icon="🚨")
+        return response
 
 def getAssets(token):
     assetUrl = baseLink + "/asset/4142"
@@ -74,6 +71,3 @@ def getAssets(token):
 
     response = requests.get(url=assetUrl, headers=headers)
     print(response)
-
-
-genToken = getToken()
