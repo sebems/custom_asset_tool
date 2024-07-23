@@ -1,14 +1,12 @@
 import requests, json
-from dotenv import dotenv_values
+import streamlit as st
 
 baseLink = "https://halo.calvin.edu/api"
 authLink = "https://halo.calvin.edu/auth/token"
 
-secrets = dotenv_values(".env")
-
 grant_type = "client_credentials"
-client_id = secrets["CLIENT_ID"]
-client_secret = secrets["CLIENT_SECRET"]
+client_id = st.secrets["CLIENT_ID"]
+client_secret = st.secrets["CLIENT_SECRET"]
 scope = "all"
 
 data = {
