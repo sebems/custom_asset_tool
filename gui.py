@@ -57,7 +57,7 @@ config = {
     ),
 }
 
-uploaded_file = st.file_uploader(label="Choose a file (BETA)", type=["csv"])
+uploaded_file = st.file_uploader(label="Choose a file (BETA)", type=["csv"], disabled=True)
 if uploaded_file is not None:
     match uploaded_file.type:
         case "text/csv":
@@ -89,15 +89,9 @@ else:
     )
     main_df = edited_df
 
-
-with st.container():
-    col1, col2 = st.columns(2, gap="small")
-
-    with col1:
-        export_btn = st.button(label="Export to Halo", on_click=export, args=(main_df,))
-
-    with col2:
-        with open("./sample.csv", "rb") as file:
-            btn = st.download_button(
-                "Download Sample", data=file, file_name="sample.csv", mime="text/csv"
-            )  # download template
+export_btn = st.button(label="Export to Halo", on_click=export, args=(main_df,))
+    
+with open("./sample.csv", "rb") as file:
+    btn = st.download_button(
+        "Download Sample", data=file, file_name="sample.csv", mime="text/csv"
+    )  # download template
