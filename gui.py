@@ -13,7 +13,12 @@ def export(dataframe):
     export_list = convertDataFrameToList(dataframe)
 
     token = getToken()
-    createAsset(token, export_list)
+    response = createAsset(token, export_list)
+
+    if (response.ok):
+        st.success('Export Successful!', icon="✅")
+    else:
+        st.st.error(response.status_code + " " + response.reason, icon="🚨")
 
 
 def uploadFile():
