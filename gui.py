@@ -1,35 +1,41 @@
+"""
+    This is the runner for the streamlit app. It provides a GUI to input assets in spreadsheet form and then allows for it export to a HaloITSM instance
+"""
+
 import streamlit as st
 import pandas as pd
 import numpy as np
 from halo_api_call import *
 
 
-def convertDataFrameToList(dataframe):
+def convertDataFrameToList(dataframe: pd.DataFrame):
+    """
+        Converts DataFrame entries into a list
+    """
     result = dataframe.values.tolist()
     return result
 
 
-def export(dataframe):
+def export(dataframe: pd.DataFrame):
+    """
+        Uses the POST API call from halo_api_call.py to push dataframe to Halo
+    """
     export_list = convertDataFrameToList(dataframe)
 
     token = getToken()
-    response = createAsset(token, export_list)
+    response = createAsset(token, export_list)    # returns a request object
 
     if (response.ok):
         st.toast('Export Successful!', icon="✅")
     else:
         st.toast(response.status_code + " " + response.reason, icon="🚨")
 
+main_df = ""    # main dataframe on the page
 
-def uploadFile():
-    pass
+st.set_page_config("Halo Asset Import", layout="wide")    # main header for app
+st.title("Halo Asset Import")    # app title
 
-
-main_df = ""
-
-st.set_page_config("Halo Asset Import", layout="wide")
-st.title("Halo Asset Import")
-
+# default dataframe w/ columns
 default_df = pd.DataFrame(
     columns=[
         "Asset Type",
@@ -44,6 +50,7 @@ default_df = pd.DataFrame(
     ]
 )
 
+# column config for data frame
 config = {
     "Asset Type": st.column_config.SelectboxColumn(
         "Asset Type", options=["Laptop", "Monitor", "Desktop"]
@@ -83,14 +90,16 @@ if uploaded_file is not None:
         case _:
             print(uploaded_file.type)
 
-else:
+else:    # if the user doesn't upload a file to be exported then aprovide an editable dataframe
     edited_df = st.data_editor(
         default_df, column_config=config, num_rows="dynamic", use_container_width=True
     )
     main_df = edited_df
 
+# EXPORT BUTTON
 export_btn = st.button(label="Export to Halo", on_click=export, args=(main_df,))
-    
+
+# DOWNLOAD SAMPLE BUTTON
 with open("./sample.csv", "rb") as file:
     btn = st.download_button(
         "Download Sample", data=file, file_name="sample.csv", mime="text/csv"
