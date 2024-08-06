@@ -65,6 +65,17 @@ def createAsset(token, asset_list: list):
     response = requests.post(url=url, headers=headers, data=json.dumps([body]))
     return response
 
+def deleteAsset(token, asset_list: list):
+    url = baseLink + "/asset/"
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+
+    for asset in asset_list:
+        pass
+        
+    response = requests.post(url=url, headers=headers, data=json.dumps())
+    return response
+
+
 def getAssets(token):
     assetUrl = baseLink + "/asset/4142"
     headers = {"Authorization": f"Bearer {token}"}
