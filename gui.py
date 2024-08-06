@@ -66,6 +66,13 @@ config = {
     ),
 }
 
+
+# DOWNLOAD SAMPLE BUTTON
+with open("./sample.csv", "rb") as file:
+    btn = st.download_button(
+        "Download Sample", data=file, file_name="sample.csv", mime="text/csv"
+    )  # download template
+
 uploaded_file = st.file_uploader(label="Choose a file (BETA)", type=["csv"], disabled=True)
 if uploaded_file is not None:
     match uploaded_file.type:
@@ -98,14 +105,12 @@ else:    # if the user doesn't upload a file to be exported then aprovide an edi
     )
     main_df = edited_df
 
-# EXPORT BUTTON
-export_btn = st.button(label="Export to Halo", on_click=export, args=(main_df,))
+col1, col2 = st.columns(2)
 
-# DELETE BUTTON
-delete_btn = st.button(label="Delete Assets", on_click=delete, type="primary")
+with col1:
+    # EXPORT BUTTON
+    export_btn = st.button(label="Export to Halo", on_click=export, args=(main_df,))
 
-# DOWNLOAD SAMPLE BUTTON
-with open("./sample.csv", "rb") as file:
-    btn = st.download_button(
-        "Download Sample", data=file, file_name="sample.csv", mime="text/csv"
-    )  # download template
+with col2:
+    # DELETE BUTTON
+    delete_btn = st.button(label="Delete Assets", on_click=delete, type="primary")
