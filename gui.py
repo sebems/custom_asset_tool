@@ -15,6 +15,8 @@ def convertDataFrameToList(dataframe: pd.DataFrame):
     result = dataframe.values.tolist()
     return result
 
+def delete(dataframe: pd.DataFrame):
+    pass
 
 def export(dataframe: pd.DataFrame):
     """
@@ -98,6 +100,9 @@ else:    # if the user doesn't upload a file to be exported then aprovide an edi
 
 # EXPORT BUTTON
 export_btn = st.button(label="Export to Halo", on_click=export, args=(main_df,))
+
+# DELETE BUTTON
+delete_btn = st.button(label="Delete Assets", on_click=delete, type="primary")
 
 # DOWNLOAD SAMPLE BUTTON
 with open("./sample.csv", "rb") as file:
