@@ -16,6 +16,9 @@ def convertDataFrameToList(dataframe: pd.DataFrame):
     return result
 
 def delete(dataframe: pd.DataFrame):
+    """
+        Deletes DataFrame entries from Halo
+    """
     pass
 
 def export(dataframe: pd.DataFrame):
