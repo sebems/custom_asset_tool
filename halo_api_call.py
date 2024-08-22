@@ -1,12 +1,24 @@
-import requests, json
+import requests, json, os
 import streamlit as st
+from dotenv import load_dotenv
+
+DEV_MODE_ON = False
+DEBUG = False
 
 baseLink = "https://halo.calvin.edu/api"
 authLink = "https://halo.calvin.edu/auth/token"
 
+if DEV_MODE_ON:
+    load_dotenv()
+
+    client_id =os.getenv("CLIENT_ID")
+    client_secret = os.getenv("CLIENT_SECRET")
+
+else:
+    client_id = st.secrets["CLIENT_ID"]
+    client_secret = st.secrets["CLIENT_SECRET"]
+
 grant_type = "client_credentials"
-client_id = st.secrets["CLIENT_ID"]
-client_secret = st.secrets["CLIENT_SECRET"]
 scope = "all"
 
 data = {
@@ -16,6 +28,7 @@ data = {
     "scope": scope,
 }
 
+# messages = st.container(height=300)
 
 def getToken():
 
@@ -33,7 +46,9 @@ def createAsset(token, asset_list: list):
     with open("./sample_asset.json", "r") as file:
         body = json.load(file)
 
-    # print(body)
+    if DEBUG:
+        print(body)
+
     for asset in asset_list:
 
         body["assettype_name"] = asset[0]
@@ -42,7 +57,8 @@ def createAsset(token, asset_list: list):
         body["inventory_number"] = asset[1]  # asset tag
         body["assettag"] = body["inventory_number"]
 
-        # print(asset)
+        if DEBUG:
+            print(asset)
 
         # body["fields"][0]["value"] = ""  # name TODO: differentiate between MAC and PC
         body["fields"][1]["value"] = asset[2]  # model
@@ -60,7 +76,8 @@ def createAsset(token, asset_list: list):
 
         body["notes"] = asset[-1]
 
-        # print(body)
+        if DEBUG:
+            print(body)
 
     response = requests.post(url=url, headers=headers, data=json.dumps([body]))
     return response
@@ -69,16 +86,33 @@ def deleteAsset(token, asset_list: list):
     url = baseLink + "/asset/"
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
-    for asset in asset_list:
-        pass
-        
-    response = requests.post(url=url, headers=headers, data=json.dumps())
-    return response
+    try:
+        for asset in asset_list:
+            asset_id = getAssetID(token, asset)
+            if asset_id != -1:
+                delete_resp = requests.delete(url=url + str(asset_id), headers=headers)
+                st.toast(f"Asset \"{asset}\" Deleted", icon="✅")
+            else:
+                st.toast(f"Asset \"{asset}\" Does Not Exist", icon="🚨")
+                continue
+    except Exception as e:
+        print(e)
 
 
-def getAssets(token):
-    assetUrl = baseLink + "/asset/4142"
-    headers = {"Authorization": f"Bearer {token}"}
+def getAssetID(token, asset_number):
+    assetUrl = baseLink + "/asset/"
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
-    response = requests.get(url=assetUrl, headers=headers)
-    print(response.text)
+    response = requests.get(url=assetUrl + f"?search={asset_number}", headers=headers)
+
+    if DEBUG:
+        print(response, response.text)
+
+    if response.json()["record_count"] <= 0:
+        if DEBUG:
+            print("Asset Doesn't Exist")
+
+        return -1
+    else:
+        temp_id_holder = response.json()["assets"][0]
+        return(temp_id_holder["id"])
